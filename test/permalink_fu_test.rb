@@ -214,6 +214,10 @@ class MockModelExtra < BaseModel
   has_permalink [:title, :extra]
 end
 
+class SeoEscapeModel < BaseModel
+  has_permalink :title, :seo_eliminate => true
+end
+
 # trying to be like ActiveRecord, define the attribute methods manually
 BaseModel.subclasses.each { |c| c.send :define_attribute_methods }
 
@@ -248,6 +252,14 @@ class PermalinkFuTest < Test::Unit::TestCase
   def test_should_escape_activerecord_model
     @m = MockModel.new
     @@samples.each do |from, to|
+      @m.title = from; @m.permalink = nil
+      assert_equal to, @m.validate
+    end
+  end
+  
+  def test_should_escape_activerecord_model_with_seo_eliminate
+    @m = SeoEscapeModel.new
+    @@samples_seo.each do |from, to|
       @m.title = from; @m.permalink = nil
       assert_equal to, @m.validate
     end
