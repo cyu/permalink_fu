@@ -13,9 +13,9 @@ module PermalinkFu
     attr_accessor :translation_from
 
     # This method does the actual permalink escaping.
-    def escape(string)
+    def escape(string, seo_elim = false)
       result = ((translation_to && translation_from) ? Iconv.iconv(translation_to, translation_from, string) : string).to_s
-      result.gsub!(SEO_WORD_REGEX, '') if (result.size > 50)
+      result.gsub!(SEO_WORD_REGEX, ' ') if ((result.size > 50) && seo_elim)
       result.gsub!(/[^\x00-\x7F]+/, '') # Remove anything non-ASCII entirely (e.g. diacritics).
       result.gsub!(/[^\w_ \-]+/i,   '') # Remove unwanted chars.
       result.gsub!(/[ \-]+/i,      '-') # No more than one of the separator in a row.
@@ -70,7 +70,7 @@ module PermalinkFu
       ClassMethods.setup_permalink_fu_on self do
         self.permalink_attributes = Array(attr_names)
         self.permalink_field      = (permalink_field || 'permalink').to_s
-        self.permalink_options    = {:unique => true}.update(options)
+        self.permalink_options    = {:unique => true, :seo_eliminate => false}.update(options)
       end
     end
   end
@@ -101,7 +101,7 @@ module PermalinkFu
 
     def define_attribute_methods_with_permalinks
       if value = define_attribute_methods_without_permalinks
-        evaluate_attribute_method permalink_field, "def #{self.permalink_field}=(new_value);write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value));end", "#{self.permalink_field}="
+        evaluate_attribute_method permalink_field, "def #{self.permalink_field}=(new_value);write_attribute(:#{self.permalink_field}, new_value.blank? ? '' : PermalinkFu.escape(new_value, #{self.permalink_options[:seo_eliminate]}));end", "#{self.permalink_field}="
       end
       value
     end

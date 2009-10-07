@@ -225,12 +225,23 @@ class PermalinkFuTest < Test::Unit::TestCase
     '中文測試 chinese text'.freeze => 'chinese-text'.freeze,
     'fööbär'.freeze => 'foobar'.freeze
   }
+  
+  @@samples_seo = {
+    'This IS a Tripped out title!!.!1  (well/ not really)'.freeze => 'this-is-tripped-title1-well-really'.freeze,
+    'i am able'.freeze => 'i-am-able'.freeze,
+  }
 
   @@extra = { 'some-)()()-ExtRa!/// .data==?>    to \/\/test'.freeze => 'some-extra-data-to-test'.freeze }
 
   def test_should_escape_permalinks
     @@samples.each do |from, to|
       assert_equal to, PermalinkFu.escape(from)
+    end
+  end
+  
+  def test_should_eliminate_seo_words
+    @@samples_seo.each do |from, to|
+      assert_equal to, PermalinkFu.escape(from, true)
     end
   end
   
