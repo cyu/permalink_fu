@@ -1,4 +1,4 @@
-PermalinkFu
+=PermalinkFu
 
 This is a simple plugin extracted from Mephisto for creating permalinks from attributes.
 
@@ -13,7 +13,9 @@ Use PermalinkFu.escape to escape a string manually if you like.
 If you're having issues with Iconv, you can manually tweak PermalinkFu.translation_to PermalinkFu.translation_from.
 These are set to nil if Iconv is not loaded.  You can also manually set them to nil if you don't want to use iconv.
 
-[Added 3.13.2008 by Pat Nakajima] You can now add conditions to #has_permalink like so:
+=== Added 3.13.2008 by Pat Nakajima
+
+You can now add conditions to #has_permalink like so:
 
 	class Article < ActiveRecord::Base
 	  has_permalink :title, :if => Proc.new { |article| article.needs_permalink? }
@@ -23,7 +25,9 @@ Use the :if or :unless options to specify a Proc, method, or string to be called
 will only be generated if the option evaluates to true.
 
 
-[Added 3.11.2009 by Martin Emde] Make permalink_fu update your permalink everytime the dependent field(s) change.
+=== Added 3.11.2009 by Martin Emde
+
+Make permalink_fu update your permalink everytime the dependent field(s) change.
 
 	class Article < ActiveRecord::Base
 	  has_permalink :title, :update => true
@@ -37,4 +41,16 @@ set it to nil or a blank string within your model.
 
 Old versions of rails without _changed? attribute support will result in the permalink field being regenerated every save.
 
-[Bug Fixed 3.11.2009] Permalink was not being checked for uniqueness when set directly with permalink= on rails versions with _changed?
+=== Bug Fixed 3.11.2009
+
+Permalink was not being checked for uniqueness when set directly with permalink= on rails versions with _changed?
+
+
+=== Added 10.6.2009 by Alex Coomans
+
+Eliminate SEO words when the size of the title is 50 characters or greater.
+
+  class Article < ActiveRecord::Base
+    has_permalink :title, :seo_eliminate => true
+  end
+
