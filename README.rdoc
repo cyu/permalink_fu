@@ -17,9 +17,9 @@ These are set to nil if Iconv is not loaded.  You can also manually set them to 
 
 You can now add conditions to #has_permalink like so:
 
-	class Article < ActiveRecord::Base
-	  has_permalink :title, :if => Proc.new { |article| article.needs_permalink? }
-	end
+  class Article < ActiveRecord::Base
+    has_permalink :title, :if => Proc.new { |article| article.needs_permalink? }
+  end
 
 Use the :if or :unless options to specify a Proc, method, or string to be called or evaluated. The permalink
 will only be generated if the option evaluates to true.
@@ -29,9 +29,9 @@ will only be generated if the option evaluates to true.
 
 Make permalink_fu update your permalink everytime the dependent field(s) change.
 
-	class Article < ActiveRecord::Base
-	  has_permalink :title, :update => true
-	end
+  class Article < ActiveRecord::Base
+    has_permalink :title, :update => true
+  end
 
 This will update your permalink every time title changes. Rails versions with _changed? methods will reduce the checks for uniqueness to only when the permalink field is changed.
 
