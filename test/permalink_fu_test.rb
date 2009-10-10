@@ -215,7 +215,11 @@ class MockModelExtra < BaseModel
 end
 
 class SeoEscapeModel < BaseModel
-  has_permalink :title, :seo_eliminate => true
+  has_permalink :title, :strip_words => true
+end
+
+class SeoEscapeModelWithWords < BaseModel
+  has_permalink :title, :strip_words => {:words => %w(able army), :min_length => 2}
 end
 
 # trying to be like ActiveRecord, define the attribute methods manually
@@ -231,8 +235,12 @@ class PermalinkFuTest < Test::Unit::TestCase
   }
   
   @@samples_seo = {
-    'This IS a Tripped out title!!.!1  (well/ not really)'.freeze => 'this-is-tripped-title1-well-really'.freeze,
+    'This IS a Tripped out title!!.!1  (well/ not really)'.freeze => 'is-tripped-title1-well-really'.freeze,
     'i am able'.freeze => 'i-am-able'.freeze,
+  }
+
+  @@samples_seo_words = {
+    'i am able'.freeze => 'i-am'.freeze,
   }
 
   @@extra = { 'some-)()()-ExtRa!/// .data==?>    to \/\/test'.freeze => 'some-extra-data-to-test'.freeze }
@@ -260,6 +268,14 @@ class PermalinkFuTest < Test::Unit::TestCase
   def test_should_escape_activerecord_model_with_seo_eliminate
     @m = SeoEscapeModel.new
     @@samples_seo.each do |from, to|
+      @m.title = from; @m.permalink = nil
+      assert_equal to, @m.validate
+    end
+  end
+  
+  def test_should_escape_activerecord_model_with_seo_eliminate_and_certain_words
+    @m = SeoEscapeModelWithWords.new
+    @@samples_seo_words.each do |from, to|
       @m.title = from; @m.permalink = nil
       assert_equal to, @m.validate
     end
