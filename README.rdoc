@@ -48,9 +48,14 @@ Permalink was not being checked for uniqueness when set directly with permalink=
 
 === Added 10.6.2009 by Alex Coomans
 
-Eliminate SEO words when the size of the title is 50 characters or greater.
+Eliminate SEO words when the size of the title is 50 characters or greater. You can either pass the value of true:
 
   class Article < ActiveRecord::Base
-    has_permalink :title, :seo_eliminate => true
+    has_permalink :title, :strip_words => true
   end
 
+or pass options, like
+
+  class Article < ActiveRecord::Base
+    has_permalink :title, :strip_words => {:min_length => 40, :words => %w(blah blah)}
+  end
